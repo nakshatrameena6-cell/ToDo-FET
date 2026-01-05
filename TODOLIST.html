@@ -1,0 +1,1457 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title> N Sparkle -  Task Tracker</title>
+    
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Tailwind CSS via CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'pastel-pink': '#FFD6E7',
+                        'pastel-blue': '#D6F5FF',
+                        'pastel-green': '#E2FFD6',
+                        'pastel-purple': '#E9D6FF',
+                        'pastel-yellow': '#FFF9D6',
+                        'pastel-lavender': '#F0D6FF',
+                        'soft-purple': '#A78BFA',
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Quicksand:wght@400;500;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --pastel-pink: #FFD6E7;
+            --pastel-blue: #D6F5FF;
+            --pastel-green: #E2FFD6;
+            --pastel-purple: #E9D6FF;
+            --pastel-yellow: #FFF9D6;
+            --pastel-lavender: #F0D6FF;
+            --soft-purple: #A78BFA;
+            --text-dark: #5A5A5A;
+            --text-light: #888888;
+        }
+        
+        [data-theme="light"] {
+            --bg-primary: #FFFFFF;
+            --bg-secondary: #F9F9F9;
+            --card-bg: #FFFFFF;
+            --border-color: #EAEAEA;
+            --shadow-color: rgba(0, 0, 0, 0.05);
+        }
+        
+        [data-theme="dark"] {
+            --bg-primary: #1A1A2E;
+            --bg-secondary: #16213E;
+            --card-bg: #0F3460;
+            --border-color: #2D4059;
+            --text-dark: #E6E6E6;
+            --text-light: #B0B0B0;
+            --shadow-color: rgba(0, 0, 0, 0.2);
+        }
+        
+        [data-theme="pastel"] {
+            --bg-primary: linear-gradient(135deg, #F5F7FA 0%, #F8F9FF 100%);
+            --bg-secondary: #FFFFFF;
+            --card-bg: #FFFFFF;
+            --border-color: #E6E6FA;
+            --shadow-color: rgba(167, 139, 250, 0.1);
+        }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-dark);
+            transition: all 0.3s ease;
+            min-height: 100vh;
+        }
+        
+        .heading-font {
+            font-family: 'Quicksand', sans-serif;
+            font-weight: 700;
+        }
+        
+        .pastel-card {
+            background-color: var(--card-bg);
+            border-radius: 20px;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 8px 25px var(--shadow-color);
+            transition: all 0.3s ease;
+        }
+        
+        .pastel-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.08);
+        }
+        
+        .nav-shadow {
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+        }
+        
+        .btn-pastel {
+            background-color: var(--soft-purple);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            padding: 10px 20px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-pastel:hover {
+            background-color: #8B5CF6;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(167, 139, 250, 0.3);
+        }
+        
+        .btn-outline-pastel {
+            border: 2px solid var(--soft-purple);
+            color: var(--soft-purple);
+            background: transparent;
+            border-radius: 12px;
+            padding: 10px 20px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-outline-pastel:hover {
+            background-color: var(--soft-purple);
+            color: white;
+        }
+        
+        .task-item {
+            border-left: 5px solid;
+            transition: all 0.2s ease;
+            border-radius: 12px;
+            margin-bottom: 10px;
+        }
+        
+        .task-item:hover {
+            background-color: rgba(167, 139, 250, 0.05);
+        }
+        
+        .priority-low { border-left-color: #90EE90; }
+        .priority-medium { border-left-color: #FFD700; }
+        .priority-high { border-left-color: #FF7F7F; }
+        
+        .completed-task {
+            text-decoration: line-through;
+            opacity: 0.7;
+            background-color: rgba(144, 238, 144, 0.1);
+        }
+        
+        .theme-selector {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            border: 3px solid transparent;
+            transition: all 0.3s ease;
+        }
+        
+        .theme-selector.active {
+            border-color: var(--soft-purple);
+            transform: scale(1.1);
+        }
+        
+        .plan-card {
+            transition: all 0.3s ease;
+            border-radius: 20px;
+            overflow: hidden;
+        }
+        
+        .plan-card:hover {
+            transform: translateY(-10px);
+        }
+        
+        .plan-popular {
+            position: relative;
+            border: 2px solid var(--soft-purple);
+            transform: scale(1.05);
+        }
+        
+        .plan-popular::before {
+            content: "Most Popular";
+            position: absolute;
+            top: -12px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: var(--soft-purple);
+            color: white;
+            padding: 3px 15px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+        
+        .motivation-quote {
+            font-style: italic;
+            position: relative;
+            padding-left: 25px;
+        }
+        
+        .motivation-quote::before {
+            content: "❝";
+            position: absolute;
+            left: 0;
+            top: -10px;
+            font-size: 2.5rem;
+            color: var(--soft-purple);
+            opacity: 0.7;
+        }
+        
+        .reminder-item {
+            border-left: 4px solid var(--soft-purple);
+            padding-left: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .stat-card {
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            min-height: 120px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        
+        .habit-tracker-day {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-weight: 600;
+        }
+        
+        .habit-tracker-day.completed {
+            background-color: #C6F6D5;
+            color: #22543D;
+        }
+        
+        .habit-tracker-day.missed {
+            background-color: #FED7D7;
+            color: #742A2A;
+        }
+        
+        .habit-tracker-day.pending {
+            background-color: #FEF3C7;
+            color: #92400E;
+        }
+        
+        .custom-alert {
+            border-radius: 15px;
+            border: none;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .task-badge {
+            border-radius: 50px;
+            padding: 4px 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        
+        /* Carousel Custom Styles */
+        .carousel-item {
+            border-radius: 20px;
+            overflow: hidden;
+        }
+        
+        .carousel-control-prev,
+        .carousel-control-next {
+            width: 50px;
+            height: 50px;
+            background-color: rgba(167, 139, 250, 0.2);
+            border-radius: 50%;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+        
+        .carousel-indicators button {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background-color: var(--soft-purple);
+        }
+        
+        /* Responsive Adjustments */
+        @media (max-width: 768px) {
+            .plan-card {
+                margin-bottom: 20px;
+            }
+            
+            .plan-popular {
+                transform: scale(1);
+            }
+            
+            .habit-tracker-day {
+                width: 35px;
+                height: 35px;
+                font-size: 0.9rem;
+            }
+            
+            .carousel-control-prev,
+            .carousel-control-next {
+                width: 40px;
+                height: 40px;
+            }
+            
+            .stat-card {
+                padding: 15px;
+                min-height: 100px;
+            }
+            
+            .display-4 {
+                font-size: 2rem;
+            }
+            
+            .lead {
+                font-size: 1rem;
+            }
+        }
+        
+        @media (max-width: 576px) {
+            .pastel-card {
+                border-radius: 15px;
+            }
+            
+            .btn-pastel, .btn-outline-pastel {
+                padding: 8px 16px;
+                font-size: 0.9rem;
+            }
+            
+            .task-item {
+                padding: 12px !important;
+            }
+        }
+        
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: #F1F1F1;
+            border-radius: 10px;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: var(--soft-purple);
+            border-radius: 10px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: #8B5CF6;
+        }
+        
+        /* Animation */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .animate-fade-in {
+            animation: fadeIn 0.5s ease forwards;
+        }
+        
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(167, 139, 250, 0.7); }
+            70% { box-shadow: 0 0 0 10px rgba(167, 139, 250, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(167, 139, 250, 0); }
+        }
+    </style>
+</head>
+<body data-theme="pastel">
+    <!-- Alert Notification -->
+    <div class="alert custom-alert alert-dismissible fade show m-3 position-fixed top-0 end-0" style="z-index: 1000; max-width: 350px; display: none;" id="globalAlert" role="alert">
+        <div class="d-flex align-items-center">
+            <i class="fas fa-bell text-purple me-3 fs-5"></i>
+            <div>
+                <h6 class="alert-heading mb-1">Reminder!</h6>
+                <p class="mb-0" id="alertMessage">You have pending tasks for today.</p>
+            </div>
+        </div>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-expand-lg navbar-light nav-shadow py-3" style="background-color: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px);">
+        <div class="container">
+            <a class="navbar-brand heading-font fs-3 fw-bold text-decoration-none" href="#">
+                <i class="fas fa-check-circle me-2" style="color: var(--soft-purple);"></i>
+                <span class="gradient-text">Sparkle</span>
+            </a>
+            
+            <!-- Mobile Toggle -->
+            <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            
+            <!-- Navbar Items -->
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav mx-auto">
+                    <li class="nav-item mx-2">
+                        <a class="nav-link active fw-semibold" href="#dashboard">
+                            <i class="fas fa-home me-1"></i> Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item mx-2">
+                        <a class="nav-link fw-semibold" href="#todo">
+                            <i class="fas fa-tasks me-1"></i> To-Do List
+                        </a>
+                    </li>
+                    <li class="nav-item mx-2">
+                        <a class="nav-link fw-semibold" href="#trackers">
+                            <i class="fas fa-chart-line me-1"></i> Trackers
+                        </a>
+                    </li>
+                    <li class="nav-item mx-2">
+                        <a class="nav-link fw-semibold" href="#reminders">
+                            <i class="fas fa-bell me-1"></i> Reminders
+                        </a>
+                    </li>
+                    <li class="nav-item dropdown mx-2">
+                        <a class="nav-link dropdown-toggle fw-semibold" href="#" id="themeDropdown" data-bs-toggle="dropdown">
+                            <i class="fas fa-palette me-1"></i> Theme
+                        </a>
+                        <div class="dropdown-menu p-3">
+                            <h6 class="dropdown-header">Select Theme</h6>
+                            <div class="d-flex justify-content-between p-2">
+                                <div class="theme-selector bg-light mx-1 active" data-theme="light" title="Light Theme"></div>
+                                <div class="theme-selector bg-dark mx-1" data-theme="dark" title="Dark Theme"></div>
+                                <div class="theme-selector mx-1" style="background: linear-gradient(135deg, var(--pastel-pink), var(--pastel-blue));" data-theme="pastel" title="Pastel Theme"></div>
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+                
+                <!-- User Actions -->
+                <div class="d-flex align-items-center">
+                    <button class="btn btn-outline-pastel btn-sm me-2" data-bs-toggle="modal" data-bs-target="#subscriptionModal">
+                        <i class="fas fa-crown me-1"></i> Upgrade
+                    </button>
+                    <div class="dropdown">
+                        <a href="#" class="d-flex align-items-center text-decoration-none dropdown-toggle" id="userDropdown" data-bs-toggle="dropdown">
+                            <div class="rounded-circle bg-pastel-purple d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
+                                <i class="fas fa-user text-purple"></i>
+                            </div>
+                        </a>
+                        <div class="dropdown-menu dropdown-menu-end">
+                            <h6 class="dropdown-header">Hello, Alex!</h6>
+                            <a class="dropdown-item" href="#"><i class="fas fa-user me-2"></i>Profile</a>
+                            <a class="dropdown-item" href="#"><i class="fas fa-cog me-2"></i>Settings</a>
+                            <div class="dropdown-divider"></div>
+                            <a class="dropdown-item" href="#"><i class="fas fa-sign-out-alt me-2"></i>Logout</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content Container -->
+    <div class="container py-4">
+        <!-- Dashboard Section -->
+        <section id="dashboard" class="mb-5">
+            <!-- Carousel for Motivation Quotes -->
+            <div id="quoteCarousel" class="carousel slide mb-4" data-bs-ride="carousel">
+                <div class="carousel-indicators">
+                    <button type="button" data-bs-target="#quoteCarousel" data-bs-slide-to="0" class="active"></button>
+                    <button type="button" data-bs-target="#quoteCarousel" data-bs-slide-to="1"></button>
+                    <button type="button" data-bs-target="#quoteCarousel" data-bs-slide-to="2"></button>
+                </div>
+                <div class="carousel-inner rounded-4">
+                    <div class="carousel-item active">
+                        <div class="pastel-card p-4 bg-pastel-yellow">
+                            <div class="row align-items-center">
+                                <div class="col-md-10">
+                                    <h4 class="heading-font"><i class="fas fa-quote-left me-2" style="color: var(--soft-purple);"></i>Daily Inspiration</h4>
+                                    <p class="motivation-quote fs-5">"The way to get started is to quit talking and begin doing."</p>
+                                    <small class="text-muted">- Walt Disney</small>
+                                </div>
+                                <div class="col-md-2 text-center">
+                                    <i class="fas fa-lightbulb display-1" style="color: var(--soft-purple); opacity: 0.3;"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="carousel-item">
+                        <div class="pastel-card p-4 bg-pastel-blue">
+                            <div class="row align-items-center">
+                                <div class="col-md-10">
+                                    <h4 class="heading-font"><i class="fas fa-quote-left me-2" style="color: var(--soft-purple);"></i>Productivity Tip</h4>
+                                    <p class="motivation-quote fs-5">"Your future is created by what you do today, not tomorrow."</p>
+                                    <small class="text-muted">- Robert Kiyosaki</small>
+                                </div>
+                                <div class="col-md-2 text-center">
+                                    <i class="fas fa-rocket display-1" style="color: var(--soft-purple); opacity: 0.3;"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="carousel-item">
+                        <div class="pastel-card p-4 bg-pastel-green">
+                            <div class="row align-items-center">
+                                <div class="col-md-10">
+                                    <h4 class="heading-font"><i class="fas fa-quote-left me-2" style="color: var(--soft-purple);"></i>Success Mindset</h4>
+                                    <p class="motivation-quote fs-5">"The secret of getting ahead is getting started."</p>
+                                    <small class="text-muted">- Mark Twain</small>
+                                </div>
+                                <div class="col-md-2 text-center">
+                                    <i class="fas fa-trophy display-1" style="color: var(--soft-purple); opacity: 0.3;"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <button class="carousel-control-prev" type="button" data-bs-target="#quoteCarousel" data-bs-slide="prev">
+                    <span class="carousel-control-prev-icon"></span>
+                </button>
+                <button class="carousel-control-next" type="button" data-bs-target="#quoteCarousel" data-bs-slide="next">
+                    <span class="carousel-control-next-icon"></span>
+                </button>
+            </div>
+            
+            <!-- Stats Grid -->
+            <div class="row g-3 mb-4">
+                <div class="col-md-3 col-sm-6">
+                    <div class="pastel-card stat-card bg-pastel-blue animate-fade-in">
+                        <h2 class="display-6 fw-bold mb-1" id="totalTasks">0</h2>
+                        <p class="mb-0 text-muted">Total Tasks</p>
+                        <small class="text-success"><i class="fas fa-arrow-up me-1"></i>12% from last week</small>
+                    </div>
+                </div>
+                <div class="col-md-3 col-sm-6">
+                    <div class="pastel-card stat-card bg-pastel-green animate-fade-in">
+                        <h2 class="display-6 fw-bold mb-1" id="completedTasks">0</h2>
+                        <p class="mb-0 text-muted">Completed</p>
+                        <small class="text-success"><i class="fas fa-check-circle me-1"></i>Good progress!</small>
+                    </div>
+                </div>
+                <div class="col-md-3 col-sm-6">
+                    <div class="pastel-card stat-card bg-pastel-pink animate-fade-in">
+                        <h2 class="display-6 fw-bold mb-1" id="pendingTasks">0</h2>
+                        <p class="mb-0 text-muted">Pending</p>
+                        <small class="text-warning"><i class="fas fa-clock me-1"></i>Need attention</small>
+                    </div>
+                </div>
+                <div class="col-md-3 col-sm-6">
+                    <div class="pastel-card stat-card bg-pastel-lavender animate-fade-in">
+                        <h2 class="display-6 fw-bold mb-1" id="productivityScore">0%</h2>
+                        <p class="mb-0 text-muted">Productivity</p>
+                        <small class="text-success"><i class="fas fa-chart-line me-1"></i>Increasing</small>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Quick Actions Grid -->
+            <div class="row g-4 mb-4">
+                <div class="col-lg-8">
+                    <div class="pastel-card p-4 h-100">
+                        <h4 class="heading-font mb-3"><i class="fas fa-plus-circle me-2" style="color: var(--soft-purple);"></i>Quick Add Task</h4>
+                        <form id="quickTaskForm" class="row g-3">
+                            <div class="col-md-6">
+                                <input type="text" class="form-control border-pastel" id="taskTitle" placeholder="What needs to be done?" required>
+                            </div>
+                            <div class="col-md-3">
+                                <select class="form-select border-pastel" id="taskPriority">
+                                    <option value="low">Low Priority</option>
+                                    <option value="medium" selected>Medium Priority</option>
+                                    <option value="high">High Priority</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <button type="submit" class="btn btn-pastel w-100">
+                                    <i class="fas fa-plus me-1"></i> Add
+                                </button>
+                            </div>
+                            <div class="col-12">
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="checkbox" id="setReminder">
+                                    <label class="form-check-label" for="setReminder">Set Reminder</label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="checkbox" id="importantTask">
+                                    <label class="form-check-label" for="importantTask">Mark as Important</label>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="pastel-card p-4 h-100 d-flex flex-column justify-content-center bg-pastel-yellow">
+                        <h4 class="heading-font mb-3"><i class="fas fa-bolt me-2" style="color: var(--soft-purple);"></i>Quick Stats</h4>
+                        <div class="mb-3">
+                            <div class="d-flex justify-content-between mb-1">
+                                <span>Today's Progress</span>
+                                <span class="fw-bold">60%</span>
+                            </div>
+                            <div class="progress" style="height: 10px; border-radius: 5px;">
+                                <div class="progress-bar bg-purple" role="progressbar" style="width: 60%"></div>
+                            </div>
+                        </div>
+                        <div class="d-flex justify-content-between">
+                            <div class="text-center">
+                                <h5 class="fw-bold mb-0" id="streakCount">7</h5>
+                                <small>Day Streak</small>
+                            </div>
+                            <div class="text-center">
+                                <h5 class="fw-bold mb-0" id="focusTime">2.5h</h5>
+                                <small>Focus Time</small>
+                            </div>
+                            <div class="text-center">
+                                <h5 class="fw-bold mb-0" id="tasksDue">3</h5>
+                                <small>Due Today</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- To-Do List Section -->
+        <section id="todo" class="mb-5">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h3 class="heading-font"><i class="fas fa-tasks me-2" style="color: var(--soft-purple);"></i>To-Do List</h3>
+                <div>
+                    <button class="btn btn-outline-pastel btn-sm me-2" id="addTaskBtn">
+                        <i class="fas fa-plus me-1"></i> New Task
+                    </button>
+                    <div class="btn-group" role="group">
+                        <button type="button" class="btn btn-outline-pastel btn-sm active" data-filter="all">All</button>
+                        <button type="button" class="btn btn-outline-pastel btn-sm" data-filter="pending">Pending</button>
+                        <button type="button" class="btn btn-outline-pastel btn-sm" data-filter="completed">Completed</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="pastel-card p-3 p-md-4">
+                <div id="todoList" class="row g-3">
+                    <!-- Tasks will be loaded here dynamically -->
+                    <div class="col-12 text-center py-5" id="emptyState">
+                        <i class="fas fa-clipboard-list display-1 mb-3" style="color: var(--pastel-purple); opacity: 0.5;"></i>
+                        <h5 class="heading-font">No tasks yet</h5>
+                        <p class="text-muted">Add your first task using the form above</p>
+                        <button class="btn btn-pastel" id="addFirstTask">
+                            <i class="fas fa-plus me-1"></i> Create First Task
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Trackers Section -->
+        <section id="trackers" class="mb-5">
+            <h3 class="heading-font mb-4"><i class="fas fa-chart-line me-2" style="color: var(--soft-purple);"></i>Progress Trackers</h3>
+            
+            <ul class="nav nav-pills mb-4" id="trackerTabs" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="daily-tab" data-bs-toggle="pill" data-bs-target="#daily">Daily</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="weekly-tab" data-bs-toggle="pill" data-bs-target="#weekly">Weekly</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="monthly-tab" data-bs-toggle="pill" data-bs-target="#monthly">Monthly</button>
+                </li>
+            </ul>
+            
+            <div class="tab-content">
+                <!-- Daily Tracker -->
+                <div class="tab-pane fade show active" id="daily" role="tabpanel">
+                    <div class="pastel-card p-4">
+                        <div class="row">
+                            <div class="col-lg-8 mb-4 mb-lg-0">
+                                <h5 class="heading-font mb-3">Daily Habit Tracker</h5>
+                                <div class="mb-3">
+                                    <div class="d-flex justify-content-between mb-1">
+                                        <span>Today's Progress</span>
+                                        <span class="fw-bold" id="dailyProgress">3/5 tasks completed</span>
+                                    </div>
+                                    <div class="progress" style="height: 12px; border-radius: 6px;">
+                                        <div class="progress-bar bg-success" role="progressbar" style="width: 60%"></div>
+                                    </div>
+                                </div>
+                                <div class="d-flex justify-content-between mb-3">
+                                    <span class="fw-semibold">Habit</span>
+                                    <span class="fw-semibold">Status</span>
+                                </div>
+                                <div id="dailyHabits">
+                                    <!-- Daily habits will be loaded here -->
+                                </div>
+                            </div>
+                            <div class="col-lg-4">
+                                <h5 class="heading-font mb-3">Today's Focus</h5>
+                                <div class="mb-4">
+                                    <div class="pastel-card p-3 bg-pastel-blue mb-3">
+                                        <div class="d-flex align-items-center">
+                                            <div class="rounded-circle bg-white d-flex align-items-center justify-content-center me-3" style="width: 40px; height: 40px;">
+                                                <i class="fas fa-dumbbell text-purple"></i>
+                                            </div>
+                                            <div>
+                                                <h6 class="mb-0">Morning Exercise</h6>
+                                                <small class="text-muted">7:00 AM - Completed</small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="pastel-card p-3 bg-pastel-green mb-3">
+                                        <div class="d-flex align-items-center">
+                                            <div class="rounded-circle bg-white d-flex align-items-center justify-content-center me-3" style="width: 40px; height: 40px;">
+                                                <i class="fas fa-briefcase text-purple"></i>
+                                            </div>
+                                            <div>
+                                                <h6 class="mb-0">Project Work</h6>
+                                                <small class="text-muted">9:00 AM - In Progress</small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="pastel-card p-3 bg-pastel-pink">
+                                        <div class="d-flex align-items-center">
+                                            <div class="rounded-circle bg-white d-flex align-items-center justify-content-center me-3" style="width: 40px; height: 40px;">
+                                                <i class="fas fa-book text-purple"></i>
+                                            </div>
+                                            <div>
+                                                <h6 class="mb-0">Evening Reading</h6>
+                                                <small class="text-muted">8:00 PM - Pending</small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Weekly Tracker -->
+                <div class="tab-pane fade" id="weekly" role="tabpanel">
+                    <div class="pastel-card p-4">
+                        <h5 class="heading-font mb-3">Weekly Progress</h5>
+                        <div class="row">
+                            <div class="col-md-8">
+                                <div class="table-responsive">
+                                    <table class="table table-borderless">
+                                        <thead>
+                                            <tr>
+                                                <th>Day</th>
+                                                <th>Tasks</th>
+                                                <th>Completed</th>
+                                                <th>Productivity</th>
+                                                <th>Status</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="weeklyTable">
+                                            <!-- Weekly data will be loaded here -->
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="pastel-card p-3 bg-pastel-lavender h-100">
+                                    <h6 class="heading-font">Weekly Summary</h6>
+                                    <div class="text-center my-4">
+                                        <div class="display-6 fw-bold mb-1" id="weeklyCompletion">75%</div>
+                                        <div class="mb-3">Completion Rate</div>
+                                        <div class="progress mb-3" style="height: 8px;">
+                                            <div class="progress-bar bg-purple" style="width: 75%"></div>
+                                        </div>
+                                    </div>
+                                    <div class="d-flex justify-content-between mb-2">
+                                        <span>Best Day:</span>
+                                        <span class="fw-bold">Wednesday</span>
+                                    </div>
+                                    <div class="d-flex justify-content-between mb-2">
+                                        <span>Tasks Done:</span>
+                                        <span class="fw-bold" id="weeklyTasksDone">24</span>
+                                    </div>
+                                    <div class="d-flex justify-content-between">
+                                        <span>Focus Time:</span>
+                                        <span class="fw-bold" id="weeklyFocusTime">12.5h</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Monthly Tracker -->
+                <div class="tab-pane fade" id="monthly" role="tabpanel">
+                    <div class="pastel-card p-4">
+                        <h5 class="heading-font mb-3">Monthly Overview</h5>
+                        <div class="row">
+                            <div class="col-lg-7 mb-4 mb-lg-0">
+                                <div class="d-flex flex-wrap gap-2 mb-4" id="monthlyCalendar">
+                                    <!-- Calendar days will be loaded here -->
+                                </div>
+                                <div class="alert alert-info custom-alert">
+                                    <div class="d-flex align-items-center">
+                                        <i class="fas fa-info-circle me-3 fs-4"></i>
+                                        <div>
+                                            <h6 class="alert-heading mb-1">Monthly Goal: 85% Completion</h6>
+                                            <p class="mb-0">You're on track to achieve your monthly goal. Keep it up!</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-5">
+                                <div class="pastel-card p-3 bg-pastel-yellow h-100">
+                                    <h6 class="heading-font">Monthly Stats</h6>
+                                    <div class="my-4">
+                                        <div class="d-flex justify-content-between align-items-center mb-3">
+                                            <span>Total Tasks:</span>
+                                            <span class="fw-bold fs-5" id="monthlyTotalTasks">48</span>
+                                        </div>
+                                        <div class="d-flex justify-content-between align-items-center mb-3">
+                                            <span>Completed:</span>
+                                            <span class="fw-bold fs-5" id="monthlyCompleted">36</span>
+                                        </div>
+                                        <div class="d-flex justify-content-between align-items-center mb-3">
+                                            <span>Success Rate:</span>
+                                            <span class="fw-bold fs-5" id="monthlySuccessRate">75%</span>
+                                        </div>
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <span>Productivity:</span>
+                                            <span class="fw-bold fs-5" id="monthlyProductivity">82%</span>
+                                        </div>
+                                    </div>
+                                    <div class="text-center mt-4">
+                                        <button class="btn btn-pastel btn-sm">
+                                            <i class="fas fa-download me-1"></i> Export Report
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Reminders & Subscription Plans -->
+        <div class="row g-4 mb-5">
+            <!-- Reminders Section -->
+            <div class="col-lg-8">
+                <section id="reminders">
+                    <div class="pastel-card p-4 h-100">
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+                            <h4 class="heading-font"><i class="fas fa-bell me-2" style="color: var(--soft-purple);"></i>Reminders</h4>
+                            <button class="btn btn-outline-pastel btn-sm" id="addReminderBtn">
+                                <i class="fas fa-plus me-1"></i> Add Reminder
+                            </button>
+                        </div>
+                        
+                        <div id="remindersList">
+                            <!-- Reminders will be loaded here -->
+                            <div class="reminder-item">
+                                <div class="d-flex justify-content-between align-items-start">
+                                    <div>
+                                        <h6 class="fw-bold mb-1">Team Meeting</h6>
+                                        <p class="mb-1">Weekly sync with the development team</p>
+                                        <small class="text-muted"><i class="far fa-clock me-1"></i>Today, 10:00 AM</small>
+                                    </div>
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" checked>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="reminder-item">
+                                <div class="d-flex justify-content-between align-items-start">
+                                    <div>
+                                        <h6 class="fw-bold mb-1">Gym Session</h6>
+                                        <p class="mb-1">Evening workout at the fitness center</p>
+                                        <small class="text-muted"><i class="far fa-clock me-1"></i>Today, 6:00 PM</small>
+                                    </div>
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox">
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="reminder-item">
+                                <div class="d-flex justify-content-between align-items-start">
+                                    <div>
+                                        <h6 class="fw-bold mb-1">Project Deadline</h6>
+                                        <p class="mb-1">Submit final design mockups</p>
+                                        <small class="text-muted"><i class="far fa-clock me-1"></i>Tomorrow, 5:00 PM</small>
+                                    </div>
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" checked>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+            
+            <!-- Subscription Plans -->
+            <div class="col-lg-4">
+                <section id="plans">
+                    <div class="pastel-card p-4 h-100">
+                        <h4 class="heading-font mb-4"><i class="fas fa-crown me-2" style="color: var(--soft-purple);"></i>Upgrade Your Plan</h4>
+                        
+                        <div class="row g-3">
+                            <!-- Free Plan -->
+                            <div class="col-12">
+                                <div class="plan-card pastel-card p-3">
+                                    <div class="d-flex justify-content-between align-items-start mb-2">
+                                        <div>
+                                            <h5 class="fw-bold mb-0">Free</h5>
+                                            <small class="text-muted">Basic features</small>
+                                        </div>
+                                        <div class="badge bg-pastel-blue text-dark">Current</div>
+                                    </div>
+                                    <h3 class="fw-bold mb-3">$0<span class="fs-6 text-muted fw-normal">/month</span></h3>
+                                    <ul class="list-unstyled mb-3">
+                                        <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Up to 50 tasks</li>
+                                        <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Basic reminders</li>
+                                        <li class="mb-2"><i class="fas fa-times text-muted me-2"></i>Advanced analytics</li>
+                                        <li class="mb-2"><i class="fas fa-times text-muted me-2"></i>Priority support</li>
+                                    </ul>
+                                    <button class="btn btn-outline-pastel w-100" disabled>Current Plan</button>
+                                </div>
+                            </div>
+                            
+                            <!-- Pro Plan -->
+                            <div class="col-12">
+                                <div class="plan-card pastel-card p-3 plan-popular">
+                                    <div class="d-flex justify-content-between align-items-start mb-2">
+                                        <div>
+                                            <h5 class="fw-bold mb-0">Pro</h5>
+                                            <small class="text-muted">Most popular</small>
+                                        </div>
+                                    </div>
+                                    <h3 class="fw-bold mb-3">$9.99<span class="fs-6 text-muted fw-normal">/month</span></h3>
+                                    <ul class="list-unstyled mb-3">
+                                        <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Unlimited tasks</li>
+                                        <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Smart reminders</li>
+                                        <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Advanced analytics</li>
+                                        <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Priority support</li>
+                                    </ul>
+                                    <button class="btn btn-pastel w-100">Upgrade to Pro</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-light py-4 mt-5">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6">
+                    <h5 class="heading-font">N Sparkle Task Tracker</h5>
+                    <p class="text-muted">Stay organized, boost productivity, and achieve your goals with our pastel-themed task tracker.</p>
+                </div>
+                <div class="col-md-3">
+                    <h6 class="fw-bold">Quick Links</h6>
+                    <ul class="list-unstyled">
+                        <li><a href="#dashboard" class="text-decoration-none text-muted">Dashboard</a></li>
+                        <li><a href="#todo" class="text-decoration-none text-muted">To-Do List</a></li>
+                        <li><a href="#trackers" class="text-decoration-none text-muted">Trackers</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-3">
+                    <h6 class="fw-bold">Connect</h6>
+                    <div class="d-flex gap-3">
+                        <a href="#" class="text-decoration-none text-muted"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="text-decoration-none text-muted"><i class="fab fa-facebook"></i></a>
+                        <a href="#" class="text-decoration-none text-muted"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="text-decoration-none text-muted"><i class="fab fa-github"></i></a>
+                    </div>
+                </div>
+            </div>
+            <hr class="my-4">
+            <div class="text-center text-muted">
+                <p class="mb-0">&copy; 2023 N Sparkle Task Tracker. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        // Initialize the application
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeApp();
+        });
+
+        function initializeApp() {
+            // Theme Switching
+            setupThemeSwitcher();
+            
+            // Initialize task management
+            setupTaskManagement();
+            
+            // Initialize trackers
+            setupTrackers();
+            
+            // Initialize reminders
+            setupReminders();
+            
+            // Update stats
+            updateStats();
+            
+            // Show welcome alert
+            setTimeout(() => {
+                showAlert('Welcome to N Sparkle Task Tracker! Start organizing your tasks now.', 'info');
+            }, 1000);
+        }
+
+        // Theme Switching
+        function setupThemeSwitcher() {
+            const themeSelectors = document.querySelectorAll('.theme-selector');
+            const savedTheme = localStorage.getItem('zenflow-theme') || 'pastel';
+            
+            // Set saved theme
+            document.body.setAttribute('data-theme', savedTheme);
+            
+            // Update active selector
+            themeSelectors.forEach(selector => {
+                if (selector.getAttribute('data-theme') === savedTheme) {
+                    selector.classList.add('active');
+                } else {
+                    selector.classList.remove('active');
+                }
+                
+                selector.addEventListener('click', function() {
+                    const theme = this.getAttribute('data-theme');
+                    document.body.setAttribute('data-theme', theme);
+                    localStorage.setItem('zenflow-theme', theme);
+                    
+                    themeSelectors.forEach(s => s.classList.remove('active'));
+                    this.classList.add('active');
+                });
+            });
+        }
+
+        // Task Management
+        let tasks = JSON.parse(localStorage.getItem('zenflow-tasks')) || [
+            {
+                id: 1,
+                title: 'Complete project proposal',
+                description: 'Finish the project proposal document and send for review',
+                priority: 'high',
+                category: 'Work',
+                completed: false,
+                createdAt: new Date().toISOString(),
+                dueDate: new Date(Date.now() + 86400000).toISOString()
+            },
+            {
+                id: 2,
+                title: 'Grocery shopping',
+                description: 'Buy milk, eggs, bread, and vegetables',
+                priority: 'medium',
+                category: 'Personal',
+                completed: true,
+                createdAt: new Date().toISOString(),
+                dueDate: new Date().toISOString()
+            },
+            {
+                id: 3,
+                title: 'Morning workout',
+                description: '30 minutes of cardio and strength training',
+                priority: 'low',
+                category: 'Health',
+                completed: false,
+                createdAt: new Date().toISOString(),
+                dueDate: new Date().toISOString()
+            }
+        ];
+
+        function setupTaskManagement() {
+            const quickTaskForm = document.getElementById('quickTaskForm');
+            const todoList = document.getElementById('todoList');
+            const filterButtons = document.querySelectorAll('[data-filter]');
+            const addFirstTaskBtn = document.getElementById('addFirstTask');
+            
+            // Load tasks
+            renderTasks();
+            
+            // Quick task form submission
+            quickTaskForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                const title = document.getElementById('taskTitle').value;
+                const priority = document.getElementById('taskPriority').value;
+                
+                if (title.trim()) {
+                    addTask({
+                        title: title,
+                        priority: priority,
+                        category: 'General',
+                        completed: false
+                    });
+                    
+                    quickTaskForm.reset();
+                    showAlert('Task added successfully!', 'success');
+                }
+            });
+            
+            // Filter tasks
+            filterButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    filterButtons.forEach(btn => btn.classList.remove('active'));
+                    this.classList.add('active');
+                    renderTasks(this.getAttribute('data-filter'));
+                });
+            });
+            
+            // Add first task button
+            addFirstTaskBtn?.addEventListener('click', function() {
+                document.getElementById('taskTitle').focus();
+            });
+            
+            // Add task button
+            document.getElementById('addTaskBtn')?.addEventListener('click', function() {
+                document.getElementById('taskTitle').focus();
+            });
+        }
+
+        function addTask(task) {
+            const newTask = {
+                id: tasks.length > 0 ? Math.max(...tasks.map(t => t.id)) + 1 : 1,
+                title: task.title,
+                description: task.description || '',
+                priority: task.priority || 'medium',
+                category: task.category || 'General',
+                completed: task.completed || false,
+                createdAt: new Date().toISOString(),
+                dueDate: task.dueDate || new Date(Date.now() + 86400000).toISOString()
+            };
+            
+            tasks.unshift(newTask);
+            saveTasks();
+            renderTasks();
+            updateStats();
+        }
+
+        function toggleTaskCompletion(taskId) {
+            const taskIndex = tasks.findIndex(task => task.id === taskId);
+            if (taskIndex !== -1) {
+                tasks[taskIndex].completed = !tasks[taskIndex].completed;
+                saveTasks();
+                renderTasks();
+                updateStats();
+                
+                const status = tasks[taskIndex].completed ? 'completed' : 'marked as pending';
+                showAlert(`Task ${status}!`, 'info');
+            }
+        }
+
+        function deleteTask(taskId) {
+            if (confirm('Are you sure you want to delete this task?')) {
+                tasks = tasks.filter(task => task.id !== taskId);
+                saveTasks();
+                renderTasks();
+                updateStats();
+                showAlert('Task deleted!', 'danger');
+            }
+        }
+
+        function saveTasks() {
+            localStorage.setItem('zenflow-tasks', JSON.stringify(tasks));
+        }
+
+        function renderTasks(filter = 'all') {
+            const todoList = document.getElementById('todoList');
+            const emptyState = document.getElementById('emptyState');
+            
+            let filteredTasks = tasks;
+            if (filter === 'pending') {
+                filteredTasks = tasks.filter(task => !task.completed);
+            } else if (filter === 'completed') {
+                filteredTasks = tasks.filter(task => task.completed);
+            }
+            
+            if (filteredTasks.length === 0) {
+                todoList.innerHTML = `
+                    <div class="col-12 text-center py-5" id="emptyState">
+                        <i class="fas fa-clipboard-list display-1 mb-3" style="color: var(--pastel-purple); opacity: 0.5;"></i>
+                        <h5 class="heading-font">No tasks found</h5>
+                        <p class="text-muted">${filter === 'all' ? 'Add your first task using the form above' : 'No ' + filter + ' tasks'}</p>
+                        ${filter === 'all' ? '<button class="btn btn-pastel" id="addFirstTask"><i class="fas fa-plus me-1"></i> Create First Task</button>' : ''}
+                    </div>
+                `;
+                
+                // Reattach event listener
+                document.getElementById('addFirstTask')?.addEventListener('click', function() {
+                    document.getElementById('taskTitle').focus();
+                });
+                
+                return;
+            }
+            
+            todoList.innerHTML = '';
+            
+            filteredTasks.forEach(task => {
+                const priorityClass = `priority-${task.priority}`;
+                const completedClass = task.completed ? 'completed-task' : '';
+                const priorityColors = {
+                    low: 'success',
+                    medium: 'warning',
+                    high: 'danger'
+                };
+                
+                const taskElement = document.createElement('div');
+                taskElement.className = `col-12 task-item ${priorityClass} ${completedClass} pastel-card p-3`;
+                taskElement.innerHTML = `
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div class="d-flex align-items-start" style="flex: 1;">
+                            <div class="form-check me-3">
+                                <input class="form-check-input" type="checkbox" ${task.completed ? 'checked' : ''} 
+                                       onclick="toggleTaskCompletion(${task.id})">
+                            </div>
+                            <div style="flex: 1;">
+                                <h6 class="fw-bold mb-1 ${task.completed ? 'text-decoration-line-through' : ''}">${task.title}</h6>
+                                <p class="mb-1 text-muted small">${task.description || 'No description'}</p>
+                                <div class="d-flex flex-wrap gap-2 mt-2">
+                                    <span class="task-badge bg-pastel-${task.priority === 'high' ? 'pink' : task.priority === 'medium' ? 'yellow' : 'green'}">
+                                        <i class="fas fa-flag me-1"></i>${task.priority.charAt(0).toUpperCase() + task.priority.slice(1)}
+                                    </span>
+                                    <span class="task-badge bg-pastel-blue">
+                                        <i class="fas fa-tag me-1"></i>${task.category}
+                                    </span>
+                                    <span class="task-badge bg-pastel-lavender">
+                                        <i class="far fa-calendar me-1"></i>${formatDate(new Date(task.dueDate))}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="d-flex gap-2">
+                            <button class="btn btn-sm btn-outline-pastel" onclick="editTask(${task.id})">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="btn btn-sm btn-outline-danger" onclick="deleteTask(${task.id})">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                `;
+                
+                todoList.appendChild(taskElement);
+            });
+        }
+
+        // Trackers
+        function setupTrackers() {
+            // Daily tracker
+            renderDailyTracker();
+            
+            // Weekly tracker
+            renderWeeklyTracker();
+            
+            // Monthly tracker
+            renderMonthlyTracker();
+        }
+
+        function renderDailyTracker() {
+            const dailyHabits = document.getElementById('dailyHabits');
+            const habits = [
+                { name: 'Morning Exercise', completed: true },
+                { name: 'Meditation', completed: true },
+                { name: 'Important Work Task', completed: true },
+                { name: 'Learning Session', completed: false },
+                { name: 'Evening Walk', completed: false }
+            ];
+            
+            dailyHabits.innerHTML = '';
+            habits.forEach(habit => {
+                const habitElement = document.createElement('div');
+                habitElement.className = 'd-flex justify-content-between align-items-center mb-2 p-2 rounded';
+                habitElement.style.backgroundColor = 'rgba(0,0,0,0.02)';
+                habitElement.innerHTML = `
+                    <span>${habit.name}</span>
+                    <span class="badge ${habit.completed ? 'bg-success' : 'bg-warning'}">
+                        ${habit.completed ? 'Completed' : 'Pending'}
+                    </span>
+                `;
+                dailyHabits.appendChild(habitElement);
+            });
+            
+            // Update progress
+            const completed = habits.filter(h => h.completed).length;
+            const total = habits.length;
+            document.getElementById('dailyProgress').textContent = `${completed}/${total} tasks completed`;
+            
+            // Update progress bar
+            const progress = (completed / total) * 100;
+            document.querySelector('#daily .progress-bar').style.width = `${progress}%`;
+        }
+
+        function renderWeeklyTracker() {
+            const weeklyTable = document.getElementById('weeklyTable');
+            const weekData = [
+                { day: 'Monday', tasks: 8, completed: 6, productivity: '85%', status: 'good' },
+                { day: 'Tuesday', tasks: 7, completed: 5, productivity: '72%', status: 'average' },
+                { day: 'Wednesday', tasks: 9, completed: 9, productivity: '95%', status: 'excellent' },
+                { day: 'Thursday', tasks: 6, completed: 4, productivity: '65%', status: 'average' },
+                { day: 'Friday', tasks: 8, completed: 7, productivity: '88%', status: 'good' },
+                { day: 'Saturday', tasks: 4, completed: 3, productivity: '75%', status: 'good' },
+                { day: 'Sunday', tasks: 3, completed: 2, productivity: '60%', status: 'average' }
+            ];
+            
+            weeklyTable.innerHTML = '';
+            weekData.forEach(day => {
+                const row = document.createElement('tr');
+                const statusBadge = day.status === 'excellent' ? 'bg-success' : 
+                                   day.status === 'good' ? 'bg-info' : 'bg-warning';
+                
+                row.innerHTML = `
+                    <td class="fw-bold">${day.day}</td>
+                    <td>${day.tasks}</td>
+                    <td>${day.completed}</td>
+                    <td>${day.productivity}</td>
+                    <td><span class="badge ${statusBadge}">${day.status}</span></td>
+                `;
+                weeklyTable.appendChild(row);
+            });
+            
+            // Update weekly stats
+            const totalTasks = weekData.reduce((sum, day) => sum + day.tasks, 0);
+            const completedTasks = weekData.reduce((sum, day) => sum + day.completed, 0);
+            const completionRate = Math.round((completedTasks / totalTasks) * 100);
+            
+            document.getElementById('weeklyCompletion').textContent = `${completionRate}%`;
+            document.getElementById('weeklyTasksDone').textContent = completedTasks;
+            document.querySelector('#weekly .progress-bar').style.width = `${completionRate}%`;
+        }
+
+        function renderMonthlyTracker() {
+            const monthlyCalendar = document.getElementById('monthlyCalendar');
+            const today = new Date();
+            const daysInMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0).getDate();
+            
+            monthlyCalendar.innerHTML = '';
+            for (let i = 1; i <= daysInMonth; i++) {
+                const dayElement = document.createElement('div');
+                dayElement.className = 'habit-tracker-day';
+                
+                // Simulate some completed/missed days
+                let status = 'pending';
+                if (i < today.getDate()) {
+                    status = Math.random() > 0.3 ? 'completed' : 'missed';
+                } else if (i === today.getDate()) {
+                    status = 'today';
+                    dayElement.classList.add('pulse');
+                }
+                
+                dayElement.classList.add(status);
+                dayElement.textContent = i;
+                dayElement.title = `Day ${i}: ${status === 'completed' ? 'All tasks completed' : status === 'missed' ? 'Some tasks missed' : 'Pending'}`;
+                
+                monthlyCalendar.appendChild(dayElement);
+            }
+            
+            // Update monthly stats
+            const completedTasks = tasks.filter(t => t.completed).length;
+            const totalTasks = tasks.length;
+            const successRate = totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0;
+            
+            document.getElementById('monthlyTotalTasks').textContent = totalTasks;
+            document.getElementById('monthlyCompleted').textContent = completedTasks;
+            document.getElementById('monthlySuccessRate').textContent = `${successRate}%`;
+        }
+
+        // Reminders
+        function setupReminders() {
+            // Add reminder button
+            document.getElementById('addReminderBtn')?.addEventListener('click', function() {
+                showAlert('Reminder feature coming soon!', 'info');
+            });
+        }
+
+        // Stats Update
+        function updateStats() {
+            const totalTasks = tasks.length;
+            const completedTasks = tasks.filter(task => task.completed).length;
+            const pendingTasks = totalTasks - completedTasks;
+            const productivityScore = totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0;
+            
+            // Update dashboard stats
+            document.getElementById('totalTasks').textContent = totalTasks;
+            document.getElementById('completedTasks').textContent = completedTasks;
+            document.getElementById('pendingTasks').textContent = pendingTasks;
+            document.getElementById('productivityScore').textContent = `${productivityScore}%`;
+            
+            // Update streak (simulated)
+            document.getElementById('streakCount').textContent = '7';
+            document.getElementById('focusTime').textContent = '2.5h';
+            document.getElementById('tasksDue').textContent = pendingTasks;
+            
+            // Update progress bars
+            const progressBars = document.querySelectorAll('.progress-bar');
+            progressBars.forEach(bar => {
+                if (bar.parentElement.id !== 'weekly' && bar.parentElement.id !== 'daily') {
+                    bar.style.width = `${productivityScore}%`;
+                }
+            });
+        }
+
+        // Utility Functions
+        function formatDate(date) {
+            return date.toLocaleDateString('en-US', { 
+                month: 'short', 
+                day: 'numeric',
+                year: date.getFullYear() !== new Date().getFullYear() ? 'numeric' : undefined
+            });
+        }
+
+        function showAlert(message, type) {
+            const alert = document.getElementById('globalAlert');
+            const alertMessage = document.getElementById('alertMessage');
+            
+            alert.className = `alert custom-alert alert-dismissible fade show alert-${type} m-3 position-fixed top-0 end-0`;
+            alertMessage.textContent = message;
+            alert.style.display = 'block';
+            
+            // Auto hide after 5 seconds
+            setTimeout(() => {
+                alert.style.display = 'none';
+            }, 5000);
+        }
+
+        // Edit task function (placeholder)
+        function editTask(taskId) {
+            showAlert('Edit feature coming soon!', 'info');
+        }
+
+        // Add task from empty state
+        window.addFirstTask = function() {
+            document.getElementById('taskTitle').focus();
+        };
+
+        // Make functions available globally
+        window.toggleTaskCompletion = toggleTaskCompletion;
+        window.deleteTask = deleteTask;
+        window.editTask = editTask;
+    </script>
+</body>
+</html>

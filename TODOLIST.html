@@ -294,6 +294,79 @@
             background-color: var(--soft-purple);
         }
         
+        /* Cat Logo Styles */
+        .cat-logo {
+            width: 55px;
+            height: 55px;
+            display: inline-block;
+            animation: catWalk 2s infinite;
+        }
+        
+        @keyframes catWalk {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-5px); }
+        }
+        
+        .cat-happy {
+            animation: catHappy 0.6s ease-in-out;
+        }
+        
+        @keyframes catHappy {
+            0% { transform: scale(1) rotate(0deg); }
+            50% { transform: scale(1.1) rotate(5deg); }
+            100% { transform: scale(1) rotate(0deg); }
+        }
+        
+        /* Streak Badge Styles */
+        .streak-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: linear-gradient(135deg, #FFD700, #FFA500);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 50px;
+            font-weight: 600;
+            box-shadow: 0 4px 15px rgba(255, 215, 0, 0.3);
+            animation: streakPulse 2s infinite;
+        }
+        
+        @keyframes streakPulse {
+            0%, 100% { box-shadow: 0 4px 15px rgba(255, 215, 0, 0.3); }
+            50% { box-shadow: 0 4px 25px rgba(255, 215, 0, 0.6); }
+        }
+        
+        .streak-info {
+            text-align: center;
+            padding: 20px;
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.1), rgba(255, 165, 0, 0.1));
+            border-radius: 15px;
+            border: 2px dashed var(--soft-purple);
+        }
+        
+        .streak-fire {
+            font-size: 2.5rem;
+            animation: fireBurn 1.5s infinite;
+            display: inline-block;
+        }
+        
+        @keyframes fireBurn {
+            0%, 100% { transform: scale(1) rotate(0deg); }
+            25% { transform: scale(1.15) rotate(-2deg); }
+            50% { transform: scale(1.1) rotate(2deg); }
+            75% { transform: scale(1.2) rotate(-1deg); }
+        }
+        
+        .milestone-badge {
+            background: linear-gradient(135deg, #A78BFA, #8B5CF6);
+            color: white;
+            padding: 10px 15px;
+            border-radius: 10px;
+            font-weight: 600;
+            display: inline-block;
+            margin: 5px;
+        }
+        
         /* Responsive Adjustments */
         @media (max-width: 768px) {
             .plan-card {
@@ -328,6 +401,11 @@
             .lead {
                 font-size: 1rem;
             }
+            
+            .cat-logo {
+                width: 45px;
+                height: 45px;
+            }
         }
         
         @media (max-width: 576px) {
@@ -342,6 +420,10 @@
             
             .task-item {
                 padding: 12px !important;
+            }
+            
+            .streak-info {
+                padding: 15px;
             }
         }
         
@@ -402,7 +484,35 @@
     <nav class="navbar navbar-expand-lg navbar-light nav-shadow py-3" style="background-color: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px);">
         <div class="container">
             <a class="navbar-brand heading-font fs-3 fw-bold text-decoration-none" href="#">
-                <i class="fas fa-check-circle me-2" style="color: var(--soft-purple);"></i>
+                <svg class="cat-logo me-2" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                    <!-- Cat Head -->
+                    <circle cx="50" cy="50" r="35" fill="#FFB6C1" stroke="#A78BFA" stroke-width="2"/>
+                    
+                    <!-- Left Ear -->
+                    <polygon points="25,25 20,5 35,20" fill="#FFB6C1" stroke="#A78BFA" stroke-width="2"/>
+                    <!-- Right Ear -->
+                    <polygon points="75,25 80,5 65,20" fill="#FFB6C1" stroke="#A78BFA" stroke-width="2"/>
+                    
+                    <!-- Left Eye -->
+                    <circle cx="40" cy="45" r="5" fill="white" stroke="#333" stroke-width="1"/>
+                    <circle cx="41" cy="45" r="3" fill="#333"/>
+                    <!-- Right Eye -->
+                    <circle cx="60" cy="45" r="5" fill="white" stroke="#333" stroke-width="1"/>
+                    <circle cx="61" cy="45" r="3" fill="#333"/>
+                    
+                    <!-- Nose -->
+                    <polygon points="50,55 48,60 52,60" fill="#FFB6C1" stroke="#A78BFA" stroke-width="1"/>
+                    
+                    <!-- Mouth -->
+                    <path d="M 50 60 Q 45 65 40 63" stroke="#333" stroke-width="2" fill="none" stroke-linecap="round"/>
+                    <path d="M 50 60 Q 55 65 60 63" stroke="#333" stroke-width="2" fill="none" stroke-linecap="round"/>
+                    
+                    <!-- Whiskers -->
+                    <line x1="25" y1="50" x2="5" y2="48" stroke="#333" stroke-width="1.5" stroke-linecap="round"/>
+                    <line x1="25" y1="55" x2="5" y2="58" stroke="#333" stroke-width="1.5" stroke-linecap="round"/>
+                    <line x1="75" y1="50" x2="95" y2="48" stroke="#333" stroke-width="1.5" stroke-linecap="round"/>
+                    <line x1="75" y1="55" x2="95" y2="58" stroke="#333" stroke-width="1.5" stroke-linecap="round"/>
+                </svg>
                 <span class="gradient-text">Sparkle</span>
             </a>
             
@@ -477,6 +587,53 @@
     <div class="container py-4">
         <!-- Dashboard Section -->
         <section id="dashboard" class="mb-5">
+            <!-- Streak Section -->
+            <div class="row mb-4">
+                <div class="col-lg-6">
+                    <div class="streak-info">
+                        <div class="d-flex align-items-center justify-content-center gap-2 mb-2">
+                            <span class="streak-fire">🔥</span>
+                            <h5 class="heading-font mb-0">Your Streak</h5>
+                        </div>
+                        <div class="d-flex justify-content-center align-items-center gap-3 my-3">
+                            <div>
+                                <div class="display-4 fw-bold" id="currentStreak">7</div>
+                                <small class="text-muted">Days</small>
+                            </div>
+                            <svg class="cat-logo" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                                <circle cx="50" cy="50" r="35" fill="#FFB6C1" stroke="#A78BFA" stroke-width="2"/>
+                                <polygon points="25,25 20,5 35,20" fill="#FFB6C1" stroke="#A78BFA" stroke-width="2"/>
+                                <polygon points="75,25 80,5 65,20" fill="#FFB6C1" stroke="#A78BFA" stroke-width="2"/>
+                                <circle cx="40" cy="45" r="5" fill="white" stroke="#333" stroke-width="1"/>
+                                <circle cx="41" cy="45" r="3" fill="#333"/>
+                                <circle cx="60" cy="45" r="5" fill="white" stroke="#333" stroke-width="1"/>
+                                <circle cx="61" cy="45" r="3" fill="#333"/>
+                                <polygon points="50,55 48,60 52,60" fill="#FFB6C1" stroke="#A78BFA" stroke-width="1"/>
+                                <path d="M 50 60 Q 45 65 40 63" stroke="#333" stroke-width="2" fill="none" stroke-linecap="round"/>
+                                <path d="M 50 60 Q 55 65 60 63" stroke="#333" stroke-width="2" fill="none" stroke-linecap="round"/>
+                            </svg>
+                        </div>
+                        <p class="text-muted mb-2" id="streakMessage">Keep going! 🎯</p>
+                        <div class="progress mb-2" style="height: 8px;">
+                            <div class="progress-bar bg-warning" id="streakProgress" style="width: 70%"></div>
+                        </div>
+                        <small class="text-muted" id="nextMilestone">Next milestone: 10 days</small>
+                        <div class="mt-3" id="milestonesList">
+                            <!-- Milestones will be shown here -->
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-lg-6">
+                    <div class="pastel-card p-4 bg-pastel-lavender h-100">
+                        <h5 class="heading-font mb-3"><i class="fas fa-trophy me-2" style="color: var(--soft-purple);"></i>Achievements</h5>
+                        <div id="achievementsList">
+                            <!-- Achievements will be shown here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <!-- Carousel for Motivation Quotes -->
             <div id="quoteCarousel" class="carousel slide mb-4" data-bs-ride="carousel">
                 <div class="carousel-indicators">
@@ -868,7 +1025,7 @@
                             <div class="reminder-item">
                                 <div class="d-flex justify-content-between align-items-start">
                                     <div>
-                                        <h6 class="fw-bold mb-1">Team Meeting</h6>
+                                        <h6 class="fw-bold mb-1">Team Meeting</h4>
                                         <p class="mb-1">Weekly sync with the development team</p>
                                         <small class="text-muted"><i class="far fa-clock me-1"></i>Today, 10:00 AM</small>
                                     </div>
@@ -881,7 +1038,7 @@
                             <div class="reminder-item">
                                 <div class="d-flex justify-content-between align-items-start">
                                     <div>
-                                        <h6 class="fw-bold mb-1">Gym Session</h6>
+                                        <h6 class="fw-bold mb-1">Gym Session</h4>
                                         <p class="mb-1">Evening workout at the fitness center</p>
                                         <small class="text-muted"><i class="far fa-clock me-1"></i>Today, 6:00 PM</small>
                                     </div>
@@ -894,7 +1051,7 @@
                             <div class="reminder-item">
                                 <div class="d-flex justify-content-between align-items-start">
                                     <div>
-                                        <h6 class="fw-bold mb-1">Project Deadline</h6>
+                                        <h6 class="fw-bold mb-1">Project Deadline</h4>
                                         <p class="mb-1">Submit final design mockups</p>
                                         <small class="text-muted"><i class="far fa-clock me-1"></i>Tomorrow, 5:00 PM</small>
                                     </div>
@@ -990,7 +1147,7 @@
             </div>
             <hr class="my-4">
             <div class="text-center text-muted">
-                <p class="mb-0">&copy; 2023 N Sparkle Task Tracker. All rights reserved.</p>
+                <p class="mb-0">&copy; 2026 N Sparkle Task Tracker. All rights reserved.</p>
             </div>
         </div>
     </footer>
@@ -999,6 +1156,92 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     
     <script>
+        // Streak Manager System
+        class StreakManager {
+            constructor() {
+                this.storageKey = 'sparkle-streak-data';
+                this.data = this.loadData();
+            }
+            
+            loadData() {
+                const saved = localStorage.getItem(this.storageKey);
+                if (saved) {
+                    return JSON.parse(saved);
+                }
+                return {
+                    currentStreak: 7,
+                    longestStreak: 15,
+                    lastCompletionDate: new Date().toISOString(),
+                    completedDates: [],
+                    milestones: [3, 5, 7, 10, 14, 21, 30, 50, 100],
+                    achievements: []
+                };
+            }
+            
+            saveData() {
+                localStorage.setItem(this.storageKey, JSON.stringify(this.data));
+            }
+            
+            getAchievements() {
+                const achievements = [];
+                const milestonesReached = this.data.milestones.filter(m => m <= this.data.longestStreak);
+                
+                milestonesReached.forEach(milestone => {
+                    achievements.push({
+                        milestone: milestone,
+                        earned: true,
+                        icon: this.getMilestoneIcon(milestone),
+                        title: `${milestone} Day Champion!`
+                    });
+                });
+                
+                return achievements;
+            }
+            
+            getMilestoneIcon(days) {
+                const icons = {
+                    3: '🐱',
+                    5: '⭐',
+                    7: '🔥',
+                    10: '🎯',
+                    14: '💎',
+                    21: '👑',
+                    30: '🏆',
+                    50: '🚀',
+                    100: '🌟'
+                };
+                return icons[days] || '🎁';
+            }
+            
+            updateStreak(tasksCompleted, totalTasks) {
+                if (tasksCompleted === totalTasks && totalTasks > 0) {
+                    const today = new Date().toDateString();
+                    const lastDate = new Date(this.data.lastCompletionDate).toDateString();
+                    
+                    if (today !== lastDate) {
+                        const yesterday = new Date();
+                        yesterday.setDate(yesterday.getDate() - 1);
+                        
+                        if (lastDate === yesterday.toDateString()) {
+                            this.data.currentStreak++;
+                        } else {
+                            this.data.currentStreak = 1;
+                        }
+                        
+                        if (this.data.currentStreak > this.data.longestStreak) {
+                            this.data.longestStreak = this.data.currentStreak;
+                        }
+                        
+                        this.data.lastCompletionDate = new Date().toISOString();
+                        this.data.completedDates.push(today);
+                        this.saveData();
+                    }
+                }
+            }
+        }
+
+        let streakManager = new StreakManager();
+
         // Initialize the application
         document.addEventListener('DOMContentLoaded', function() {
             initializeApp();
@@ -1019,10 +1262,12 @@
             
             // Update stats
             updateStats();
+            updateStreakDisplay();
+            updateAchievementsDisplay();
             
             // Show welcome alert
             setTimeout(() => {
-                showAlert('Welcome to N Sparkle Task Tracker! Start organizing your tasks now.', 'info');
+                showAlert('Welcome to N Sparkle Task Tracker with Streak! 🎉', 'info');
             }, 1000);
         }
 
@@ -1111,7 +1356,7 @@
                     });
                     
                     quickTaskForm.reset();
-                    showAlert('Task added successfully!', 'success');
+                    showAlert('Task added successfully! 🎉', 'success');
                 }
             });
             
@@ -1160,9 +1405,15 @@
                 saveTasks();
                 renderTasks();
                 updateStats();
+                updateStreakDisplay();
                 
-                const status = tasks[taskIndex].completed ? 'completed' : 'marked as pending';
-                showAlert(`Task ${status}!`, 'info');
+                const status = tasks[taskIndex].completed ? 'completed ✅' : 'marked as pending 📝';
+                showAlert(`Task ${status}`, 'info');
+                
+                // Check and update streak
+                const completedTasks = tasks.filter(t => t.completed).length;
+                streakManager.updateStreak(completedTasks, tasks.length);
+                updateStreakDisplay();
             }
         }
 
@@ -1172,7 +1423,7 @@
                 saveTasks();
                 renderTasks();
                 updateStats();
-                showAlert('Task deleted!', 'danger');
+                showAlert('Task deleted! 🗑️', 'danger');
             }
         }
 
@@ -1257,6 +1508,55 @@
                 `;
                 
                 todoList.appendChild(taskElement);
+            });
+        }
+
+        // Streak Display Update
+        function updateStreakDisplay() {
+            const currentStreak = streakManager.data.currentStreak;
+            const longestStreak = streakManager.data.longestStreak;
+            const nextMilestone = streakManager.data.milestones.find(m => m > currentStreak) || 'Unlimited';
+            
+            document.getElementById('currentStreak').textContent = currentStreak;
+            document.getElementById('streakCount').textContent = currentStreak;
+            
+            // Update progress to next milestone
+            const next = streakManager.data.milestones.find(m => m > currentStreak) || 100;
+            const prev = streakManager.data.milestones.filter(m => m < currentStreak).pop() || 0;
+            const progress = ((currentStreak - prev) / (next - prev)) * 100;
+            document.getElementById('streakProgress').style.width = `${Math.min(progress, 100)}%`;
+            document.getElementById('nextMilestone').textContent = `Next milestone: ${next} days`;
+            
+            // Update message
+            let message = 'Keep going! 🎯';
+            if (currentStreak >= 7) message = 'Amazing! You\'re on fire! 🔥';
+            if (currentStreak >= 14) message = 'Incredible! You\'re unstoppable! 💪';
+            if (currentStreak >= 30) message = 'Legendary status unlocked! 👑';
+            
+            document.getElementById('streakMessage').textContent = message;
+        }
+
+        // Achievements Display
+        function updateAchievementsDisplay() {
+            const achievements = streakManager.getAchievements();
+            const achievementsList = document.getElementById('achievementsList');
+            
+            achievementsList.innerHTML = '';
+            if (achievements.length === 0) {
+                achievementsList.innerHTML = '<p class="text-muted text-center">Start completing tasks to earn achievements! 🎁</p>';
+                return;
+            }
+            
+            achievements.forEach(achievement => {
+                const badge = document.createElement('div');
+                badge.className = `milestone-badge`;
+                badge.innerHTML = `
+                    <span class="me-2">${achievement.icon}</span>
+                    <span>${achievement.milestone}d</span>
+                    <i class="fas fa-check ms-2 text-light"></i>
+                `;
+                badge.title = achievement.title;
+                achievementsList.appendChild(badge);
             });
         }
 
@@ -1359,7 +1659,7 @@
                 if (i < today.getDate()) {
                     status = Math.random() > 0.3 ? 'completed' : 'missed';
                 } else if (i === today.getDate()) {
-                    status = 'today';
+                    status = 'completed';
                     dayElement.classList.add('pulse');
                 }
                 
@@ -1384,7 +1684,7 @@
         function setupReminders() {
             // Add reminder button
             document.getElementById('addReminderBtn')?.addEventListener('click', function() {
-                showAlert('Reminder feature coming soon!', 'info');
+                showAlert('Reminder feature coming soon! ⏰', 'info');
             });
         }
 
@@ -1402,7 +1702,7 @@
             document.getElementById('productivityScore').textContent = `${productivityScore}%`;
             
             // Update streak (simulated)
-            document.getElementById('streakCount').textContent = '7';
+            document.getElementById('streakCount').textContent = streakManager.data.currentStreak;
             document.getElementById('focusTime').textContent = '2.5h';
             document.getElementById('tasksDue').textContent = pendingTasks;
             
@@ -1440,7 +1740,7 @@
 
         // Edit task function (placeholder)
         function editTask(taskId) {
-            showAlert('Edit feature coming soon!', 'info');
+            showAlert('Edit feature coming soon! ✏️', 'info');
         }
 
         // Add task from empty state
